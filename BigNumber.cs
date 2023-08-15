@@ -90,7 +90,12 @@ namespace Interview
                     builder.Append(curSum);
                 }
             }
-            return new BigNumber(builder.ToString().Reverse().ToString());
+            var reverseBuilder = new StringBuilder();
+            for (var i = builder.Length - 1; 0 < i + 1; i--)
+            {
+                reverseBuilder.Append(builder[i]);
+            }
+            return new BigNumber(reverseBuilder.ToString());
         }
 
         private int[] ParseDigits(string number)
