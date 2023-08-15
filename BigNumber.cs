@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Text;
 
 namespace Interview
@@ -72,14 +71,15 @@ namespace Interview
                 }
 
                 ind++;
+                tempDigit = 0;
                 isFinal = ind >= a.Digits.Length && ind >= b.Digits.Length;
 
                 if (curSum > 9)
                 {
-                    var digit = curSum / 10;
+                    var digit = curSum % 10;
                     builder.Append(digit);
 
-                    tempDigit = curSum % 10;
+                    tempDigit = 1;
                     if (isFinal)
                     {
                         builder.Append(tempDigit);
