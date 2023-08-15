@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Interview
 {
@@ -33,17 +34,45 @@ namespace Interview
 
         public BigNumber(string x)
         {
-            throw new NotImplementedException();
+            digits = ParseDigits(x);
         }
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            var builder = new StringBuilder("");
+            for (var i = digits.Length - 1;  0 < i + 1; i--)
+            {
+                builder.Append(digits[i].ToString());
+            }
+            return builder.ToString();
         }
 
         public static BigNumber operator +(BigNumber a, BigNumber b)
         {
             throw new NotImplementedException();
+        }
+
+        private int[] ParseDigits(string number)
+        {
+            if (number[0] == '0')
+            {
+                throw new Exception("Содержит ведущие нули!");
+            }
+
+            var digits = new int[number.Length];
+            var digitInd = 0;
+            for (var i = number.Length - 1; 0 < i + 1; i--, digitInd++)
+            {
+                if (int.TryParse(number[i].ToString(), out int digit))
+                {
+                    digits[digitInd] = digit;
+                }
+                else
+                {
+                    throw new Exception("Содержит не только цифры!");
+                }
+            }
+            return digits;
         }
     }
 }
