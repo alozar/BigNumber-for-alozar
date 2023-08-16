@@ -32,17 +32,28 @@ namespace Interview
         // лучше хранить в обратном порядке
         private int[] digits;
 
-        public int[] Digits {  get { return digits; } }
-
         public BigNumber(string x)
         {
             digits = ParseDigits(x);
         }
 
+        public BigNumber(int[] digits)
+        {
+            this.digits = digits;
+        }
+
+
+        public int Length { get => digits.Length; }
+
+        public int this[int index]
+        {
+            get => digits[index];
+        }
+
         public override string ToString()
         {
-            var builder = new StringBuilder("");
-            for (var i = digits.Length - 1;  0 < i + 1; i--)
+            var builder = new StringBuilder(digits.Length);
+            for (var i = digits.Length - 1; i >= 0; i--)
             {
                 builder.Append(digits[i].ToString());
             }
@@ -51,72 +62,51 @@ namespace Interview
 
         public static BigNumber operator +(BigNumber a, BigNumber b)
         {
-            var builder = new StringBuilder("");
-            var isFinal = false;
+            //Больший из двух разрядов чисел
+            var maxNumberLength = a.Length < b.Length ? b.Length : a.Length;
+            var digits = new int[maxNumberLength];
             var ind = 0;
-            var tempDigit = 0;
             var curSum = 0;
-            while (!isFinal)
+            while (true)
             {
-                curSum = tempDigit;
-
-                if (ind < a.Digits.Length)
+                if (ind < a.Length)
                 {
-                    curSum += a.Digits[ind];
+                    curSum += a[ind];
                 }
 
-                if (ind < b.Digits.Length)
+                if (ind < b.Length)
                 {
-                    curSum += b.Digits[ind];
+                    curSum += b[ind];
                 }
 
+                digits[ind] = curSum % 10;
                 ind++;
-                tempDigit = 0;
-                isFinal = ind >= a.Digits.Length && ind >= b.Digits.Length;
 
-                if (curSum > 9)
+                // Если больше 9, то 1 в уме и переносим ее в следующий разряд
+                curSum = curSum > 9 ? 1 : 0;
+
+                if (ind >= maxNumberLength)
                 {
-                    var digit = curSum % 10;
-                    builder.Append(digit);
-
-                    tempDigit = 1;
-                    if (isFinal)
+                    if (curSum == 1)
                     {
-                        builder.Append(tempDigit);
+                        Array.Resize(ref digits, digits.Length + 1);
+                        digits[ind] = 1;
                     }
-                }
-                else
-                {
-                    builder.Append(curSum);
+                    break;
                 }
             }
-            var reverseBuilder = new StringBuilder();
-            for (var i = builder.Length - 1; 0 < i + 1; i--)
-            {
-                reverseBuilder.Append(builder[i]);
-            }
-            return new BigNumber(reverseBuilder.ToString());
+
+            return new BigNumber(digits);
         }
 
         private int[] ParseDigits(string number)
         {
-            if (number[0] == '0')
-            {
-                throw new Exception("Содержит ведущие нули!");
-            }
-
             var digits = new int[number.Length];
-            var digitInd = 0;
-            for (var i = number.Length - 1; 0 < i + 1; i--, digitInd++)
+            // Считываем строку с послденего индекса
+            for (var i = number.Length - 1; i >= 0; i--)
             {
-                if (int.TryParse(number[i].ToString(), out int digit))
-                {
-                    digits[digitInd] = digit;
-                }
-                else
-                {
-                    throw new Exception("Содержит не только цифры!");
-                }
+                // Записываем в массив с 0 индекса
+                digits[number.Length - 1 - i] = number[i] - '0';
             }
             return digits;
         }
